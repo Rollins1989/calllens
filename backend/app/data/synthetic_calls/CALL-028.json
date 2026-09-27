@@ -1,0 +1,54 @@
+{
+  "scenario": "angry_customer_escalation",
+  "expected_intent": "complaint",
+  "predicted_intent": "complaint",
+  "expected_outcome": "human_handoff",
+  "actual_outcome": "unresolved",
+  "required_actions": [
+    "understand_request",
+    "handoff_to_human"
+  ],
+  "actual_tool_calls": [],
+  "transcript": [
+    {
+      "speaker": "customer",
+      "text": "This is unacceptable, I've been waiting for 40 minutes and no one called me back!",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "agent",
+      "text": "Okay, let me check that.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "customer",
+      "text": "I want to speak to a manager right now.",
+      "timestamp_ms": 0,
+      "interrupted": true
+    },
+    {
+      "speaker": "agent",
+      "text": "I can help you with most things, what's the issue?",
+      "timestamp_ms": 0,
+      "interrupted": false
+    }
+  ],
+  "duration_seconds": 52,
+  "initial_sentiment": "angry",
+  "final_sentiment": "angry",
+  "call_id": "CALL-028",
+  "bot_type": "appointment_bot",
+  "model_tag": "model-a-8b",
+  "prompt_version": "v1",
+  "latency": {
+    "stt_ms": 226,
+    "llm_ms": 839,
+    "tts_ms": 233,
+    "time_to_first_response_ms": 1254,
+    "end_to_end_ms": 1984
+  },
+  "llm_input_tokens": 222,
+  "llm_output_tokens": 106
+}

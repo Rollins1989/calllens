@@ -1,0 +1,67 @@
+{
+  "scenario": "customer_interruption",
+  "expected_intent": "book_appointment",
+  "predicted_intent": "book_appointment",
+  "expected_outcome": "booking_confirmed",
+  "actual_outcome": "booking_confirmed",
+  "required_actions": [
+    "collect_date",
+    "collect_time",
+    "confirm_booking"
+  ],
+  "actual_tool_calls": [
+    {
+      "name": "confirm_booking",
+      "arguments": {},
+      "success": true
+    }
+  ],
+  "transcript": [
+    {
+      "speaker": "agent",
+      "text": "So to confirm, I'll be booking you for Wednesday at\u2014",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "customer",
+      "text": "Wait, actually can we make it Thursday instead?",
+      "timestamp_ms": 0,
+      "interrupted": true
+    },
+    {
+      "speaker": "agent",
+      "text": "Of course, let's change that to Thursday. What time works?",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "customer",
+      "text": "Thursday at 2 PM please.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "agent",
+      "text": "Got it, Thursday at 2 PM - confirmed.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    }
+  ],
+  "duration_seconds": 35,
+  "initial_sentiment": "neutral",
+  "final_sentiment": "positive",
+  "call_id": "CALL-053",
+  "bot_type": "appointment_bot",
+  "model_tag": "model-b-mini",
+  "prompt_version": "v3",
+  "latency": {
+    "stt_ms": 208,
+    "llm_ms": 716,
+    "tts_ms": 225,
+    "time_to_first_response_ms": 1083,
+    "end_to_end_ms": 1717
+  },
+  "llm_input_tokens": 176,
+  "llm_output_tokens": 60
+}

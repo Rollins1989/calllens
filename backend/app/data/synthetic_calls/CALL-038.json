@@ -1,0 +1,55 @@
+{
+  "scenario": "customer_language_switch",
+  "expected_intent": "book_appointment",
+  "predicted_intent": "unclear",
+  "expected_outcome": "booking_confirmed",
+  "actual_outcome": "unresolved",
+  "required_actions": [
+    "understand_request",
+    "collect_time",
+    "attempt_booking"
+  ],
+  "actual_tool_calls": [],
+  "transcript": [
+    {
+      "speaker": "customer",
+      "text": "Hi, mujhe appointment book karni hai kal ke liye.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "agent",
+      "text": "Sorry, could you say that in English please?",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "customer",
+      "text": "Kal shaam 5 baje.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "agent",
+      "text": "I'm not able to understand, can you repeat in English?",
+      "timestamp_ms": 0,
+      "interrupted": false
+    }
+  ],
+  "duration_seconds": 40,
+  "initial_sentiment": "neutral",
+  "final_sentiment": "frustrated",
+  "call_id": "CALL-038",
+  "bot_type": "appointment_bot",
+  "model_tag": "model-b-mini",
+  "prompt_version": "v1",
+  "latency": {
+    "stt_ms": 224,
+    "llm_ms": 807,
+    "tts_ms": 234,
+    "time_to_first_response_ms": 1208,
+    "end_to_end_ms": 1910
+  },
+  "llm_input_tokens": 147,
+  "llm_output_tokens": 171
+}

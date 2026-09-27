@@ -1,0 +1,62 @@
+{
+  "scenario": "incomplete_information",
+  "expected_intent": "book_appointment",
+  "predicted_intent": "book_appointment",
+  "expected_outcome": "booking_confirmed",
+  "actual_outcome": "booking_confirmed",
+  "required_actions": [
+    "identify_customer",
+    "collect_date",
+    "collect_time",
+    "confirm_booking"
+  ],
+  "actual_tool_calls": [
+    {
+      "name": "confirm_booking",
+      "arguments": {},
+      "success": true
+    }
+  ],
+  "transcript": [
+    {
+      "speaker": "customer",
+      "text": "I'd like to book an appointment.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "agent",
+      "text": "Sure! Could I get your name and a preferred date and time?",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "customer",
+      "text": "Sure, it's Arjun.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "agent",
+      "text": "Thanks Arjun, and what date and time would you like?",
+      "timestamp_ms": 0,
+      "interrupted": false
+    }
+  ],
+  "duration_seconds": 38,
+  "initial_sentiment": "neutral",
+  "final_sentiment": "neutral",
+  "call_id": "CALL-061",
+  "bot_type": "appointment_bot",
+  "model_tag": "model-a-8b",
+  "prompt_version": "v3",
+  "latency": {
+    "stt_ms": 226,
+    "llm_ms": 765,
+    "tts_ms": 240,
+    "time_to_first_response_ms": 1146,
+    "end_to_end_ms": 1808
+  },
+  "llm_input_tokens": 145,
+  "llm_output_tokens": 67
+}

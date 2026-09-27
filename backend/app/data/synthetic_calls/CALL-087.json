@@ -1,0 +1,68 @@
+{
+  "scenario": "tool_failure_recovery",
+  "expected_intent": "book_appointment",
+  "predicted_intent": "book_appointment",
+  "expected_outcome": "human_handoff",
+  "actual_outcome": "human_handoff",
+  "required_actions": [
+    "collect_date",
+    "collect_time",
+    "attempt_booking",
+    "detect_failure",
+    "handoff_to_human"
+  ],
+  "actual_tool_calls": [
+    {
+      "name": "attempt_booking",
+      "arguments": {},
+      "success": false
+    },
+    {
+      "name": "handoff_to_human",
+      "arguments": {},
+      "success": true
+    }
+  ],
+  "transcript": [
+    {
+      "speaker": "customer",
+      "text": "I'd like to book for Friday at noon.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "agent",
+      "text": "Let me check availability... I'm sorry, our booking system is temporarily down.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "agent",
+      "text": "I've noted your details and I'll transfer you to a human agent who can complete the booking manually.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "customer",
+      "text": "Okay.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    }
+  ],
+  "duration_seconds": 42,
+  "initial_sentiment": "neutral",
+  "final_sentiment": "neutral",
+  "call_id": "CALL-087",
+  "bot_type": "appointment_bot",
+  "model_tag": "model-c-flagship",
+  "prompt_version": "v2",
+  "latency": {
+    "stt_ms": 231,
+    "llm_ms": 743,
+    "tts_ms": 247,
+    "time_to_first_response_ms": 1112,
+    "end_to_end_ms": 1750
+  },
+  "llm_input_tokens": 138,
+  "llm_output_tokens": 61
+}

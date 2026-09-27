@@ -1,0 +1,61 @@
+{
+  "scenario": "customer_language_switch",
+  "expected_intent": "book_appointment",
+  "predicted_intent": "book_appointment",
+  "expected_outcome": "booking_confirmed",
+  "actual_outcome": "booking_confirmed",
+  "required_actions": [
+    "understand_request",
+    "collect_time",
+    "attempt_booking"
+  ],
+  "actual_tool_calls": [
+    {
+      "name": "attempt_booking",
+      "arguments": {},
+      "success": true
+    }
+  ],
+  "transcript": [
+    {
+      "speaker": "customer",
+      "text": "Hi, mujhe appointment book karni hai kal ke liye.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "agent",
+      "text": "Bilkul, main aapki madad kar sakta hoon. Kal kis time appointment chahiye?",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "customer",
+      "text": "Kal shaam 5 baje.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "agent",
+      "text": "Theek hai, maine kal shaam 5 baje ke liye appointment book kar di hai.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    }
+  ],
+  "duration_seconds": 40,
+  "initial_sentiment": "neutral",
+  "final_sentiment": "positive",
+  "call_id": "CALL-044",
+  "bot_type": "appointment_bot",
+  "model_tag": "model-b-mini",
+  "prompt_version": "v3",
+  "latency": {
+    "stt_ms": 245,
+    "llm_ms": 753,
+    "tts_ms": 262,
+    "time_to_first_response_ms": 1120,
+    "end_to_end_ms": 1754
+  },
+  "llm_input_tokens": 140,
+  "llm_output_tokens": 70
+}

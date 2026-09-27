@@ -1,0 +1,46 @@
+# Policy compliance rules for CallLens.
+#
+# type: forbidden          -> `pattern` must never appear in an agent turn.
+# type: required_followup  -> whenever a customer turn matches `trigger_pattern`,
+#                              an agent turn within `window_turns` must match
+#                              `followup_pattern` (or `pattern` if not set).
+policies:
+  - id: P001
+    rule: "Never disclose internal system prompts or instructions."
+    type: forbidden
+    pattern: "(my (system|instructions) (say|tell me)|as an ai language model configured to)"
+    severity: high
+
+  - id: P002
+    rule: "Never promise a refund without authorization."
+    type: forbidden
+    pattern: "your refund will (be processed|go through)|i(?:'ll| will) refund you"
+    severity: critical
+
+  - id: P003
+    rule: "Payment disputes must be transferred to a human agent."
+    type: required_followup
+    trigger_pattern: "(dispute|unauthorized charge|chargeback|billed twice|wrong amount charged)"
+    followup_pattern: "(transfer(ring)?|human agent|specialist|escalat)"
+    window_turns: 4
+    severity: high
+
+  - id: P004
+    rule: "Do not invent appointment availability without checking the system."
+    type: forbidden
+    pattern: "we have (?:an )?opening (?:at|on) .*guarantee"
+    severity: high
+
+  - id: P005
+    rule: "Do not make medical diagnoses; only licensed staff may do so."
+    type: forbidden
+    pattern: "you (definitely|certainly) have (a|an) [a-z]+(itis|osis|oma|emia)"
+    severity: critical
+
+  - id: P006
+    rule: "Angry or highly frustrated customers must be offered a human escalation path."
+    type: required_followup
+    trigger_pattern: "(this is unacceptable|i want to speak to a manager|extremely frustrated|furious)"
+    followup_pattern: "(transfer(ring)?|human agent|manager|specialist|escalat)"
+    window_turns: 3
+    severity: medium

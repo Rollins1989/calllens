@@ -1,0 +1,63 @@
+{
+  "scenario": "wrong_date_intent_confusion",
+  "expected_intent": "cancel_appointment",
+  "predicted_intent": "reschedule_appointment",
+  "expected_outcome": "appointment_cancelled",
+  "actual_outcome": "appointment_cancelled",
+  "required_actions": [
+    "identify_customer",
+    "understand_request",
+    "attempt_booking"
+  ],
+  "actual_tool_calls": [
+    {
+      "name": "attempt_booking",
+      "arguments": {
+        "action": "cancel"
+      },
+      "success": true
+    }
+  ],
+  "transcript": [
+    {
+      "speaker": "customer",
+      "text": "I need to cancel my appointment on the 14th.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "agent",
+      "text": "I understand you want to reschedule your appointment. What new date works?",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "customer",
+      "text": "No, I want to cancel it entirely, not reschedule.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "agent",
+      "text": "My apologies for the confusion - I've cancelled your appointment on the 14th.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    }
+  ],
+  "duration_seconds": 48,
+  "initial_sentiment": "neutral",
+  "final_sentiment": "frustrated",
+  "call_id": "CALL-010",
+  "bot_type": "appointment_bot",
+  "model_tag": "model-a-8b",
+  "prompt_version": "v1",
+  "latency": {
+    "stt_ms": 215,
+    "llm_ms": 828,
+    "tts_ms": 222,
+    "time_to_first_response_ms": 1243,
+    "end_to_end_ms": 1973
+  },
+  "llm_input_tokens": 146,
+  "llm_output_tokens": 71
+}

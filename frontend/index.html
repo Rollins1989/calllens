@@ -1,0 +1,558 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CallLens — Voice Agent QA Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#0B0E14; --panel:#10141C; --panel-2:#141926; --border:#232938;
+    --text:#E7EAF2; --muted:#8891A6; --muted-2:#5C6478;
+    --accent:#33D6B3; --accent-dim:#1E7C68;
+    --warn:#F2B84B; --danger:#FF6B6B;
+    --sans:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0; background:var(--bg); color:var(--text); font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent);}
+  .topbar{
+    display:flex; align-items:center; gap:20px; padding:14px 22px;
+    border-bottom:1px solid var(--border); background:var(--panel);
+    position:sticky; top:0; z-index:10;
+  }
+  .brand{display:flex; align-items:baseline; gap:9px;}
+  .brand .mark{
+    width:9px;height:9px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 8px var(--accent); display:inline-block;
+  }
+  .brand h1{font-size:16px; font-weight:600; margin:0; letter-spacing:.2px;}
+  .brand span{color:var(--muted); font-size:12px; font-family:var(--mono);}
+  nav{display:flex; gap:2px; margin-left:24px;}
+  nav button{
+    background:transparent; border:1px solid transparent; color:var(--muted);
+    font-family:var(--sans); font-size:13px; padding:7px 13px; border-radius:5px;
+    cursor:pointer; transition:.12s;
+  }
+  nav button:hover{color:var(--text); background:var(--panel-2);}
+  nav button.active{color:var(--bg); background:var(--accent); font-weight:600;}
+  .spacer{flex:1;}
+  .pill{
+    font-family:var(--mono); font-size:11px; color:var(--muted); border:1px solid var(--border);
+    padding:4px 9px; border-radius:20px; display:flex; align-items:center; gap:6px;
+  }
+  main{max-width:1360px; margin:0 auto; padding:24px 22px 60px;}
+  .view{display:none;}
+  .view.active{display:block;}
+
+  .stat-row{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:20px;}
+  .stat{
+    background:var(--panel); border:1px solid var(--border); border-radius:6px; padding:16px 18px;
+  }
+  .stat .label{font-size:11.5px; color:var(--muted); text-transform:none;}
+  .stat .value{font-family:var(--mono); font-size:28px; font-weight:600; margin-top:6px;}
+  .stat .value.good{color:var(--accent);}
+  .stat .value.bad{color:var(--danger);}
+
+  .panel{
+    background:var(--panel); border:1px solid var(--border); border-radius:6px; padding:18px 20px;
+    margin-bottom:18px;
+  }
+  .panel h2{font-size:14px; margin:0 0 14px; font-weight:600; display:flex; align-items:center; gap:8px;}
+  .panel h2 .sub{color:var(--muted); font-weight:400; font-size:12px; font-family:var(--mono);}
+
+  .grid-2{display:grid; grid-template-columns:1.15fr .85fr; gap:18px; align-items:start;}
+  @media (max-width:980px){ .grid-2{grid-template-columns:1fr;} .stat-row{grid-template-columns:repeat(2,1fr);} }
+
+  table{width:100%; border-collapse:collapse; font-size:12.5px;}
+  th{
+    text-align:left; color:var(--muted); font-weight:500; font-size:11px;
+    padding:6px 8px; border-bottom:1px solid var(--border); font-family:var(--mono);
+  }
+  td{padding:7px 8px; border-bottom:1px solid #1a1f2b; font-family:var(--mono); white-space:nowrap;}
+  tbody tr{cursor:pointer; transition:.1s;}
+  tbody tr:hover{background:var(--panel-2);}
+  tbody tr.selected{background:#182034;}
+  .scroller{max-height:560px; overflow:auto;}
+
+  .score-chip{
+    display:inline-block; min-width:34px; text-align:center; padding:2px 6px; border-radius:4px;
+    font-weight:600; font-size:12px;
+  }
+  .score-chip.s-good{background:rgba(51,214,179,.15); color:var(--accent);}
+  .score-chip.s-mid{background:rgba(242,184,75,.15); color:var(--warn);}
+  .score-chip.s-bad{background:rgba(255,107,107,.15); color:var(--danger);}
+
+  .toolbar{display:flex; gap:8px; align-items:center; margin-bottom:14px; flex-wrap:wrap;}
+  select, button.btn{
+    background:var(--panel-2); color:var(--text); border:1px solid var(--border);
+    border-radius:5px; padding:7px 11px; font-family:var(--sans); font-size:12.5px; cursor:pointer;
+  }
+  button.btn.primary{background:var(--accent); color:#04231c; border-color:var(--accent); font-weight:600;}
+  button.btn:hover{filter:brightness(1.15);}
+  button.btn:disabled{opacity:.5; cursor:default;}
+
+  .transcript{max-height:280px; overflow:auto; border:1px solid var(--border); border-radius:5px; padding:10px 12px; background:var(--bg);}
+  .line{font-family:var(--mono); font-size:12.5px; margin-bottom:8px; line-height:1.5;}
+  .line .who{font-weight:600; margin-right:6px;}
+  .line.agent .who{color:var(--accent);}
+  .line.customer .who{color:var(--warn);}
+  .line .flag{color:var(--danger); font-size:11px; margin-left:6px;}
+
+  .breakdown-row{display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid #1a1f2b; font-size:12.5px;}
+  .breakdown-row .bar-track{flex:1; height:5px; background:#1a1f2b; border-radius:3px; margin:0 12px; overflow:hidden;}
+  .breakdown-row .bar-fill{height:100%; background:var(--accent);}
+  .breakdown-row .pts{font-family:var(--mono); color:var(--muted); width:64px; text-align:right;}
+
+  .callout{
+    background:var(--panel-2); border:1px solid var(--border); border-left:3px solid var(--accent);
+    padding:10px 14px; border-radius:4px; font-size:13px; margin-bottom:16px; line-height:1.55;
+  }
+  .callout.warn{border-left-color:var(--warn);}
+  .empty{color:var(--muted); font-size:13px; padding:30px 10px; text-align:center;}
+
+  .violation, .halluc{
+    border:1px solid var(--border); border-left:3px solid var(--danger); border-radius:4px;
+    padding:9px 12px; font-size:12.5px; margin-bottom:8px; background:var(--panel-2);
+  }
+  .violation .id, .halluc .sev{font-family:var(--mono); color:var(--danger); margin-right:8px;}
+
+  .recommend{
+    background:var(--panel-2); border:1px solid var(--border); border-radius:5px;
+    padding:12px 14px; font-size:13px; line-height:1.55; color:var(--text);
+  }
+
+  .voice-demo-box{display:flex; gap:22px; flex-wrap:wrap;}
+  .mic-circle{
+    width:120px; height:120px; border-radius:50%; border:2px solid var(--border);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    background:var(--panel-2); flex-shrink:0; transition:.15s;
+  }
+  .mic-circle.live{border-color:var(--danger); box-shadow:0 0 0 6px rgba(255,107,107,.12);}
+  .mic-circle svg{width:34px; height:34px; fill:var(--muted);}
+  .mic-circle.live svg{fill:var(--danger);}
+  .log{flex:1; min-width:280px;}
+  .note{color:var(--muted); font-size:12px; line-height:1.6;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <span class="mark"></span>
+    <h1>CallLens</h1>
+    <span>voice-agent QA console</span>
+  </div>
+  <nav>
+    <button data-view="overview" class="active">Overview</button>
+    <button data-view="calls">Calls</button>
+    <button data-view="experiments">Experiments</button>
+    <button data-view="voice">Voice Demo (V2)</button>
+  </nav>
+  <div class="spacer"></div>
+  <div class="pill"><span class="mark" style="box-shadow:none;"></span> API connected</div>
+</div>
+
+<main>
+
+  <!-- ===================== OVERVIEW ===================== -->
+  <section class="view active" id="view-overview">
+    <div class="stat-row">
+      <div class="stat"><div class="label">Total calls evaluated</div><div class="value" id="stat-total">—</div></div>
+      <div class="stat"><div class="label">Resolution rate</div><div class="value good" id="stat-resolution">—</div></div>
+      <div class="stat"><div class="label">Hallucination rate</div><div class="value" id="stat-halluc">—</div></div>
+      <div class="stat"><div class="label">Average QA score</div><div class="value" id="stat-qa">—</div></div>
+    </div>
+
+    <div class="panel">
+      <h2>QA score across evaluated calls <span class="sub">/api/dashboard/summary</span></h2>
+      <canvas id="scoreChart" height="90"></canvas>
+    </div>
+
+    <div class="panel">
+      <h2>How scoring works</h2>
+      <div class="note">
+        Every call is scored on three independent evaluation layers: <b style="color:var(--text)">deterministic
+        checks</b> (was a required step completed, did the tool call succeed), an <b style="color:var(--text)">LLM
+        judge</b> scoped to strictly semantic dimensions (relevance, clarity, empathy, instruction-following,
+        naturalness), and <b style="color:var(--text)">reference-based checks</b> against a knowledge base
+        (hallucination detection) and a policy file (compliance). The weighted combination is configurable per
+        bot type — see <code>config.SCORING_WEIGHTS</code>. Nothing here is a single unexplained number: open any
+        call in the <b style="color:var(--text)">Calls</b> tab to see the full point-by-point breakdown and the
+        plain-English primary failure.
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CALLS ===================== -->
+  <section class="view" id="view-calls">
+    <div class="grid-2">
+      <div>
+        <div class="panel">
+          <div class="toolbar">
+            <select id="filter-bot"><option value="">All bot types</option></select>
+            <select id="filter-scenario"><option value="">All scenarios</option></select>
+            <button class="btn" id="btn-refresh">Refresh</button>
+            <button class="btn primary" id="btn-eval-all">Evaluate all calls</button>
+          </div>
+          <div class="scroller">
+            <table>
+              <thead><tr>
+                <th>Call</th><th>Scenario</th><th>Model</th><th>Prompt</th><th>Score</th><th>Resolved</th>
+              </tr></thead>
+              <tbody id="calls-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="call-detail">
+        <div class="panel"><div class="empty">Select a call on the left to see its full transcript,<br>score breakdown, and recommendation.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== EXPERIMENTS ===================== -->
+  <section class="view" id="view-experiments">
+    <div class="panel">
+      <div class="toolbar">
+        <span class="note" style="margin-right:4px;">Compare by:</span>
+        <select id="exp-groupby">
+          <option value="prompt_version">Prompt version</option>
+          <option value="model_tag">Model</option>
+        </select>
+        <button class="btn primary" id="btn-run-exp">Run comparison</button>
+      </div>
+      <div id="exp-headline"></div>
+      <div class="scroller">
+        <table id="exp-table"><thead></thead><tbody></tbody></table>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Overall QA score by group</h2>
+      <canvas id="expChart" height="90"></canvas>
+    </div>
+  </section>
+
+  <!-- ===================== VOICE DEMO ===================== -->
+  <section class="view" id="view-voice">
+    <div class="panel">
+      <h2>Live Version 2 pipeline <span class="sub">Browser mic → STT → agent → TTS → CallLens evaluator</span></h2>
+      <p class="note" style="margin-bottom:16px;">
+        This talks to a real booking agent over <code>/ws/voice</code>, end to end. With no STT/TTS API keys
+        configured on the server, speech-to-text uses a scripted mock (it ignores your actual audio content and
+        advances through a demo script each turn) so the full loop — including the live evaluator report at the
+        end — still runs with zero configuration. Point <code>STT_PROVIDER</code>/<code>TTS_PROVIDER</code> at a
+        real provider in <code>.env</code> to make it fully live.
+      </p>
+      <div class="voice-demo-box">
+        <div class="mic-circle" id="mic-btn">
+          <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
+        </div>
+        <div class="log">
+          <div class="toolbar">
+            <button class="btn" id="btn-start-call">Start call</button>
+            <button class="btn" id="btn-next-turn" disabled>Send next customer turn</button>
+            <button class="btn primary" id="btn-end-call" disabled>End call &amp; evaluate</button>
+          </div>
+          <div class="transcript" id="voice-transcript"><div class="empty">No active call.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="panel" id="voice-report" style="display:none;">
+      <h2>Call report</h2>
+      <div id="voice-report-body"></div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+const $ = (sel, el=document) => el.querySelector(sel);
+const $$ = (sel, el=document) => [...el.querySelectorAll(sel)];
+
+// ---------- nav ----------
+$$('nav button').forEach(btn => btn.addEventListener('click', () => {
+  $$('nav button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  $$('.view').forEach(v => v.classList.remove('active'));
+  $('#view-' + btn.dataset.view).classList.add('active');
+  if (btn.dataset.view === 'calls') loadCalls();
+  if (btn.dataset.view === 'overview') loadOverview();
+}));
+
+function scoreClass(score){
+  if (score >= 85) return 's-good';
+  if (score >= 65) return 's-mid';
+  return 's-bad';
+}
+function pct(x){ return (x===null||x===undefined) ? '—' : x + '%'; }
+
+// ---------- overview ----------
+let scoreChart;
+async function loadOverview(){
+  const r = await fetch('/api/dashboard/summary').then(r=>r.json());
+  $('#stat-total').textContent = r.total_calls;
+  $('#stat-resolution').textContent = pct(r.resolution_rate_pct);
+  $('#stat-halluc').textContent = pct(r.hallucination_rate_pct);
+  $('#stat-halluc').className = 'value ' + (r.hallucination_rate_pct > 5 ? 'bad' : 'good');
+  $('#stat-qa').textContent = r.avg_qa_score;
+  $('#stat-qa').className = 'value ' + (r.avg_qa_score >= 80 ? 'good' : (r.avg_qa_score < 60 ? 'bad':''));
+
+  const ctx = $('#scoreChart');
+  const labels = r.score_series.map(p => p.call_id.replace('CALL-',''));
+  const data = r.score_series.map(p => p.score);
+  if (scoreChart) scoreChart.destroy();
+  scoreChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets: [{ data, borderColor: '#33D6B3', backgroundColor:'rgba(51,214,179,.08)',
+      fill:true, pointRadius:0, borderWidth:1.6, tension:.25 }] },
+    options: { plugins:{legend:{display:false}},
+      scales:{ x:{ ticks:{color:'#5C6478', maxTicksLimit:12, font:{family:'IBM Plex Mono',size:10}}, grid:{color:'#1a1f2b'} },
+               y:{ min:0,max:100, ticks:{color:'#5C6478', font:{family:'IBM Plex Mono',size:10}}, grid:{color:'#1a1f2b'} } } }
+  });
+}
+
+// ---------- calls ----------
+let ALL_CALLS = [];
+async function loadCalls(){
+  const bot = $('#filter-bot').value, scenario = $('#filter-scenario').value;
+  const params = new URLSearchParams();
+  if (bot) params.set('bot_type', bot);
+  if (scenario) params.set('scenario', scenario);
+  const r = await fetch('/api/calls?' + params.toString()).then(r=>r.json());
+  ALL_CALLS = r.calls;
+
+  const bots = [...new Set(ALL_CALLS.map(c=>c.bot_type))];
+  const scenarios = [...new Set(ALL_CALLS.map(c=>c.scenario))];
+  if (!$('#filter-bot').dataset.filled){
+    bots.forEach(b => $('#filter-bot').insertAdjacentHTML('beforeend', `<option value="${b}">${b}</option>`));
+    scenarios.forEach(s => $('#filter-scenario').insertAdjacentHTML('beforeend', `<option value="${s}">${s}</option>`));
+    $('#filter-bot').dataset.filled = '1';
+  }
+
+  $('#calls-tbody').innerHTML = ALL_CALLS.map(c => `
+    <tr data-id="${c.call_id}">
+      <td>${c.call_id}</td>
+      <td>${c.scenario}</td>
+      <td>${c.model_tag}</td>
+      <td>${c.prompt_version}</td>
+      <td>${c.overall_score!=null ? `<span class="score-chip ${scoreClass(c.overall_score)}">${c.overall_score}</span>` : '<span class="note">not scored</span>'}</td>
+      <td>${c.resolved===null ? '—' : (c.resolved ? '✓' : '✗')}</td>
+    </tr>`).join('');
+
+  $$('#calls-tbody tr').forEach(tr => tr.addEventListener('click', () => selectCall(tr.dataset.id, tr)));
+}
+
+async function selectCall(callId, trEl){
+  $$('#calls-tbody tr').forEach(t=>t.classList.remove('selected'));
+  if (trEl) trEl.classList.add('selected');
+
+  let data = await fetch('/api/calls/' + callId).then(r=>r.json());
+  if (!data.evaluation){
+    data = { call: data.call, evaluation: await fetch('/api/calls/' + callId + '/evaluate', {method:'POST'}).then(r=>r.json()) };
+  }
+  renderCallDetail(data.call, data.evaluation);
+}
+
+function renderCallDetail(call, ev){
+  const score = ev.score;
+  const dims = Object.keys(score.dimension_scores);
+
+  const transcriptHtml = call.transcript.map((t,i) => {
+    let flag = '';
+    if (ev.groundedness.hallucinations.some(h=>h.evidence_turn_index===i)) flag += ' <span class="flag">⚠ hallucination</span>';
+    if (ev.policy.violations.some(v=>v.evidence_turn_index===i)) flag += ' <span class="flag">⚠ policy</span>';
+    return `<div class="line ${t.speaker}"><span class="who">${t.speaker.toUpperCase()}</span>${t.text}${flag}</div>`;
+  }).join('');
+
+  const breakdownHtml = dims.map(d => {
+    const pts = score.dimension_points[d];
+    const weight = score.weights_used[d] || 0;
+    const maxPts = Math.round(weight*100*10)/10;
+    const width = maxPts>0 ? Math.min(100, (pts/maxPts)*100) : 0;
+    return `<div class="breakdown-row">
+      <div style="width:150px;">${d.replaceAll('_',' ')}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${width}%"></div></div>
+      <div class="pts">${pts.toFixed(1)} / ${maxPts.toFixed(1)}</div>
+    </div>`;
+  }).join('');
+
+  const violationsHtml = ev.policy.violations.map(v =>
+    `<div class="violation"><span class="id">${v.policy_id}</span>${v.rule}<br><span class="note">${v.evidence}</span></div>`
+  ).join('') || '<div class="note">No policy violations detected.</div>';
+
+  const halluc = ev.groundedness.hallucinations.map(h =>
+    `<div class="halluc"><span class="sev">${h.severity.toUpperCase()}</span>${h.claim}${h.source_value ? ` — source of truth: <b>${h.source_value}</b>` : ''}</div>`
+  ).join('') || '<div class="note">No hallucinations detected.</div>';
+
+  $('#call-detail').innerHTML = `
+    <div class="panel">
+      <h2>${call.call_id} <span class="sub">${call.scenario} · ${call.model_tag} · prompt ${call.prompt_version}</span></h2>
+      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:14px;">
+        <span style="font-family:var(--mono); font-size:34px; font-weight:700;">${score.overall_score}</span>
+        <span class="note">/ 100</span>
+      </div>
+      ${score.primary_failure ? `<div class="callout warn"><b>Primary failure:</b> ${score.primary_failure}</div>` : `<div class="callout"><b>No major issues</b> — this call performed well across all dimensions.</div>`}
+      ${breakdownHtml}
+    </div>
+
+    <div class="panel">
+      <h2>Transcript</h2>
+      <div class="transcript">${transcriptHtml}</div>
+    </div>
+
+    <div class="panel">
+      <h2>Policy compliance</h2>
+      ${violationsHtml}
+    </div>
+
+    <div class="panel">
+      <h2>Groundedness</h2>
+      ${halluc}
+    </div>
+
+    <div class="panel">
+      <h2>Recommendation</h2>
+      <div class="recommend">${ev.recommendation}</div>
+    </div>
+
+    <div class="panel">
+      <h2>Cost &amp; latency</h2>
+      <div class="note" style="font-family:var(--mono); line-height:2;">
+        STT: $${ev.cost.stt_usd.toFixed(6)} · LLM in: $${ev.cost.llm_input_usd.toFixed(6)} ·
+        LLM out: $${ev.cost.llm_output_usd.toFixed(6)} · TTS: $${ev.cost.tts_usd.toFixed(6)}<br>
+        Total: $${((ev.cost?.stt_usd || 0) + (ev.cost?.llm_input_usd || 0) + (ev.cost?.llm_output_usd || 0) + (ev.cost?.tts_usd || 0)).toFixed(6)} &nbsp;|&nbsp;
+        End-to-end latency: ${ev.latency.end_to_end_ms ?? '—'} ms
+      </div>
+    </div>
+  `;
+}
+
+$('#btn-refresh').addEventListener('click', loadCalls);
+$('#filter-bot').addEventListener('change', loadCalls);
+$('#filter-scenario').addEventListener('change', loadCalls);
+$('#btn-eval-all').addEventListener('click', async () => {
+  $('#btn-eval-all').disabled = true; $('#btn-eval-all').textContent = 'Evaluating…';
+  await fetch('/api/calls/evaluate-all', {method:'POST'});
+  await loadCalls(); await loadOverview();
+  $('#btn-eval-all').disabled = false; $('#btn-eval-all').textContent = 'Evaluate all calls';
+});
+
+// ---------- experiments ----------
+let expChart;
+async function runExperiment(){
+  const groupBy = $('#exp-groupby').value;
+  const r = await fetch('/api/experiments/run?group_by=' + groupBy, {method:'POST'}).then(r=>r.json());
+  const groups = Object.keys(r.comparison);
+  const metrics = ['n_calls','intent_accuracy_pct','task_completion_pct','resolution_pct',
+                   'hallucination_rate_pct','policy_compliance_pct','avg_overall_score','avg_latency_ms','avg_cost_usd'];
+  const metricLabels = {
+    n_calls:'Calls', intent_accuracy_pct:'Intent accuracy %', task_completion_pct:'Task completion %',
+    resolution_pct:'Resolution %', hallucination_rate_pct:'Hallucination %', policy_compliance_pct:'Policy compliance %',
+    avg_overall_score:'Avg QA score', avg_latency_ms:'Avg latency (ms)', avg_cost_usd:'Avg cost ($)'
+  };
+
+  $('#exp-headline').innerHTML = r.headline ? `<div class="callout">${r.headline}</div>` : '';
+
+  $('#exp-table thead').innerHTML = `<tr><th>Metric</th>${groups.map(g=>`<th>${g}</th>`).join('')}</tr>`;
+  $('#exp-table tbody').innerHTML = metrics.map(m => `
+    <tr><td>${metricLabels[m]}</td>${groups.map(g=>`<td>${r.comparison[g][m]}</td>`).join('')}</tr>
+  `).join('');
+
+  const ctx = $('#expChart');
+  if (expChart) expChart.destroy();
+  expChart = new Chart(ctx, {
+    type:'bar',
+    data:{ labels:groups, datasets:[{ label:'Avg QA score', data:groups.map(g=>r.comparison[g].avg_overall_score),
+      backgroundColor:'#33D6B3', borderRadius:3, maxBarThickness:60 }] },
+    options:{ plugins:{legend:{display:false}},
+      scales:{ x:{ ticks:{color:'#8891A6', font:{family:'IBM Plex Mono',size:11}}, grid:{display:false} },
+               y:{ min:0,max:100, ticks:{color:'#5C6478'}, grid:{color:'#1a1f2b'} } } }
+  });
+}
+$('#btn-run-exp').addEventListener('click', runExperiment);
+
+// ---------- voice demo ----------
+let ws, callActive = false;
+function logLine(cls, who, text){
+  const el = $('#voice-transcript');
+  if (el.querySelector('.empty')) el.innerHTML = '';
+  el.insertAdjacentHTML('beforeend', `<div class="line ${cls}"><span class="who">${who}</span>${text}</div>`);
+  el.scrollTop = el.scrollHeight;
+}
+
+$('#btn-start-call').addEventListener('click', () => {
+  ws = new WebSocket((location.protocol==='https:'?'wss://':'ws://') + location.host + '/ws/voice');
+  ws.onopen = () => {
+    callActive = true;
+    $('#voice-transcript').innerHTML = '';
+    logLine('agent','SYSTEM ','Call connected. Click "Send next customer turn" to advance the demo (or speak — mock STT will still advance the script).');
+    $('#btn-next-turn').disabled = false;
+    $('#btn-end-call').disabled = false;
+    $('#btn-start-call').disabled = true;
+    $('#mic-btn').classList.add('live');
+    $('#voice-report').style.display = 'none';
+  };
+  ws.onmessage = (evt) => {
+    const msg = JSON.parse(evt.data);
+    if (msg.type === 'agent_turn'){
+      logLine('customer','CUSTOMER ', msg.customer_text);
+      logLine('agent','AGENT ', msg.agent_text + ` <span class="note">(${msg.latency.end_to_end_ms} ms)</span>`);
+    }
+    if (msg.type === 'call_report'){
+      renderVoiceReport(msg);
+      endVoiceUI();
+    }
+  };
+  ws.onclose = () => endVoiceUI();
+});
+
+function sendChunk(){
+  if (!ws || ws.readyState !== 1) return;
+  // Mock STT ignores real audio bytes and advances a scripted demo utterance
+  // each call; a tiny placeholder payload keeps the wire protocol identical
+  // to what a real mic recording would send.
+  ws.send(JSON.stringify({type:'audio_chunk', audio_b64: btoa('demo-audio-chunk')}));
+}
+$('#btn-next-turn').addEventListener('click', sendChunk);
+$('#mic-btn').addEventListener('click', () => { if (callActive) sendChunk(); });
+
+$('#btn-end-call').addEventListener('click', () => {
+  if (ws && ws.readyState === 1) ws.send(JSON.stringify({type:'end_call'}));
+});
+
+function endVoiceUI(){
+  callActive = false;
+  $('#btn-next-turn').disabled = true;
+  $('#btn-end-call').disabled = true;
+  $('#btn-start-call').disabled = false;
+  $('#mic-btn').classList.remove('live');
+}
+
+function renderVoiceReport(msg){
+  const ev = msg.evaluation;
+  $('#voice-report').style.display = 'block';
+  $('#voice-report-body').innerHTML = `
+    <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:10px;">
+      <span style="font-family:var(--mono); font-size:34px; font-weight:700;">${ev.score.overall_score}</span>
+      <span class="note">/ 100 — ${msg.call_id}</span>
+    </div>
+    ${ev.score.primary_failure ? `<div class="callout warn"><b>Primary failure:</b> ${ev.score.primary_failure}</div>` : `<div class="callout"><b>No major issues detected.</b></div>`}
+    <div class="recommend">${ev.recommendation}</div>
+  `;
+}
+
+// ---------- init ----------
+loadOverview();
+</script>
+</body>
+</html>

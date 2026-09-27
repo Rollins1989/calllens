@@ -1,0 +1,17 @@
+services:
+  calllens:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - LLM_PROVIDER=${LLM_PROVIDER:-mock}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - STT_PROVIDER=${STT_PROVIDER:-mock}
+      - TTS_PROVIDER=${TTS_PROVIDER:-mock}
+      - DATABASE_URL=sqlite:////app/data/calllens.db
+    volumes:
+      - calllens_data:/app/data
+
+volumes:
+  calllens_data:

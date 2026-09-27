@@ -1,0 +1,92 @@
+{
+  "scenario": "successful_booking",
+  "expected_intent": "book_appointment",
+  "predicted_intent": "book_appointment",
+  "expected_outcome": "booking_confirmed",
+  "actual_outcome": "booking_confirmed",
+  "required_actions": [
+    "identify_customer",
+    "collect_date",
+    "collect_time",
+    "attempt_booking",
+    "confirm_booking"
+  ],
+  "actual_tool_calls": [
+    {
+      "name": "attempt_booking",
+      "arguments": {},
+      "success": true
+    },
+    {
+      "name": "confirm_booking",
+      "arguments": {},
+      "success": true
+    }
+  ],
+  "transcript": [
+    {
+      "speaker": "customer",
+      "text": "Hi, I'd like to book an appointment for next Tuesday.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "agent",
+      "text": "Sure, I can help with that. Can I get your name please?",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "customer",
+      "text": "My name is Priya Shah, phone number 9876543210.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "agent",
+      "text": "Thanks Priya. What time on Tuesday works for you?",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "customer",
+      "text": "Around 4 PM works for me.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "agent",
+      "text": "Great, I have you down for Tuesday at 4 PM. Shall I confirm this booking?",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "customer",
+      "text": "Yes, that's correct, please confirm it.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "agent",
+      "text": "You're all set - your appointment is confirmed for Tuesday at 4 PM.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    }
+  ],
+  "duration_seconds": 95,
+  "initial_sentiment": "neutral",
+  "final_sentiment": "positive",
+  "call_id": "CALL-002",
+  "bot_type": "appointment_bot",
+  "model_tag": "model-b-mini",
+  "prompt_version": "v1",
+  "latency": {
+    "stt_ms": 254,
+    "llm_ms": 837,
+    "tts_ms": 264,
+    "time_to_first_response_ms": 1238,
+    "end_to_end_ms": 1940
+  },
+  "llm_input_tokens": 146,
+  "llm_output_tokens": 146
+}

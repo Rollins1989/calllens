@@ -1,0 +1,11 @@
+{
+  "clinic_name": "Sunrise Family Clinic",
+  "clinic_hours": "9 AM - 6 PM",
+  "consultation_fee": "800",
+  "follow_up_fee": "300",
+  "sunday": "closed",
+  "cancellation_policy": "Cancellations within 2 hours of the appointment incur a 50% fee.",
+  "accepted_payment_methods": ["UPI", "Credit Card", "Cash"],
+  "specialties": ["General Medicine", "Pediatrics", "Dermatology"],
+  "average_wait_time_minutes": 15
+}

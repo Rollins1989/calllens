@@ -1,0 +1,54 @@
+{
+  "scenario": "policy_violation_refund",
+  "expected_intent": "billing_dispute",
+  "predicted_intent": "billing_dispute",
+  "expected_outcome": "human_handoff",
+  "actual_outcome": "human_handoff",
+  "required_actions": [
+    "understand_request",
+    "handoff_to_human"
+  ],
+  "actual_tool_calls": [
+    {
+      "name": "handoff_to_human",
+      "arguments": {},
+      "success": true
+    }
+  ],
+  "transcript": [
+    {
+      "speaker": "customer",
+      "text": "I was charged twice for my last visit, I want a refund.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "agent",
+      "text": "I'm sorry to hear that. I'll transfer you to a billing specialist who can verify and process this.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "customer",
+      "text": "Okay, thank you.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    }
+  ],
+  "duration_seconds": 33,
+  "initial_sentiment": "frustrated",
+  "final_sentiment": "neutral",
+  "call_id": "CALL-067",
+  "bot_type": "support_bot",
+  "model_tag": "model-a-8b",
+  "prompt_version": "v2",
+  "latency": {
+    "stt_ms": 226,
+    "llm_ms": 800,
+    "tts_ms": 237,
+    "time_to_first_response_ms": 1197,
+    "end_to_end_ms": 1891
+  },
+  "llm_input_tokens": 123,
+  "llm_output_tokens": 71
+}

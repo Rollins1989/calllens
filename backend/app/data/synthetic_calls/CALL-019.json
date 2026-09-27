@@ -1,0 +1,53 @@
+{
+  "scenario": "hallucinated_price",
+  "expected_intent": "general_inquiry",
+  "predicted_intent": "general_inquiry",
+  "expected_outcome": "accurate_info_given",
+  "actual_outcome": "accurate_info_given",
+  "required_actions": [
+    "understand_request"
+  ],
+  "actual_tool_calls": [],
+  "transcript": [
+    {
+      "speaker": "customer",
+      "text": "How much is a consultation?",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "agent",
+      "text": "Our consultation fee is \u20b9800.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "customer",
+      "text": "And are you open on Sundays?",
+      "timestamp_ms": 0,
+      "interrupted": false
+    },
+    {
+      "speaker": "agent",
+      "text": "No, we're closed on Sundays.",
+      "timestamp_ms": 0,
+      "interrupted": false
+    }
+  ],
+  "duration_seconds": 30,
+  "initial_sentiment": "neutral",
+  "final_sentiment": "neutral",
+  "call_id": "CALL-019",
+  "bot_type": "appointment_bot",
+  "model_tag": "model-a-8b",
+  "prompt_version": "v1",
+  "latency": {
+    "stt_ms": 198,
+    "llm_ms": 811,
+    "tts_ms": 205,
+    "time_to_first_response_ms": 1226,
+    "end_to_end_ms": 1956
+  },
+  "llm_input_tokens": 188,
+  "llm_output_tokens": 149
+}
